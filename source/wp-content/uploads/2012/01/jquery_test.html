@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+  <title>jquery_test</title>
+  <meta name="description" content="" />
+  <meta name="author" content="Damien Antipa" />
+
+  <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+  <style type="text/css">
+  	body {
+  		color: #0a0a0a;
+  		font-family: Arial, Helvetica, sans-serif;
+  		line-height: 1.5em;
+  	}
+  	
+  	span.code {
+  		font-weight: bold;
+  		color: red;
+  	}
+  
+  	#desc {
+  		background: #cccccc;
+  		border: 1px solid #0a0a0a;
+  		margin: 1em;
+  		padding: 1em;
+  	}
+  </style>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript">
+  	var cloneTest = {
+		$original : undefined,
+		$fieldset : undefined,
+		
+		init : function(selector) {
+			var t = this;
+			
+			t.$fieldset = $(selector).find('fieldset');
+			t.$original = $(selector).find('input#original');
+			$(selector).find('input.trigger').bind('click', function(e) {
+				e.preventDefault();
+				console.log('Button pressed... clone test executed');
+				
+				$(this).hide();
+				t.insert();
+			});
+			
+			console.log('clone test initialized with ' + selector);
+		},
+		
+		insert : function() {
+			var t = this;
+			var $copy = t.$original.first().parent().clone();
+			console.log('Element was cloned');
+			
+			t.$fieldset.append('<div>Okay.... first I created a copy of my element<br />' +
+				'<span class="code">var $copy = t.$original.first().parent().clone();</span><br />' +
+				'then I changed the value of the input field<br />' +
+				'<span class="code">$copy.find(\'input\').val(\'changed value\');</span><br />' +
+				'Afterwards I inserted the element with the $.after command<br />' +
+				'<span class="code">t.$fieldset.append($copy);</span><br />' +
+				'</div>'
+			);
+			
+			$copy.find('input').val('changed value');
+			console.log('Clone was changed');
+			t.$fieldset.append($copy);
+			console.log('Clone element was added to DOM');
+			
+			t.$fieldset.append('<div>Easy-going, however if you try not to insert the element but the value received by $.html()....<br />' +
+				'<span class="code">t.$fieldset.append(\'&lt;div&gt;\'+ $copy.html() + \'&lt;/div&gt;\');</span><br />' +
+				'</div>'
+			);
+			
+			t.$fieldset.append('<div>'+ $copy.html() + '</div>');
+			console.log('Clone HTML was added to DOM');
+			
+			t.$fieldset.append('<div>The value is not changed....why?</div>'
+			);
+		}
+	};
+	
+	var scriptTagTest = {
+		$original : undefined,
+		$fieldset : undefined,
+		
+		init : function(selector) {
+			var t = this;
+			
+			t.$fieldset = $(selector).find('fieldset');
+			t.$original = $(selector).find('input#original');
+			$(selector).find('input.trigger').bind('click', function(e) {
+				e.preventDefault();
+				$(this).hide();
+				t.insert();
+			});
+			
+			console.log('script tag test initialized with ' + selector);
+		},
+		
+		insert : function() {
+			var t = this;
+			var $copy = t.$original.first().parent().clone();
+			console.log('Element was cloned');
+			
+			t.$fieldset.append('<div>Okay.... first I created a copy of my element<br />' +
+				'<span class="code">var $copy = t.$original.first().parent().clone();</span><br />' +
+				'Afterwards I inserted the element with the $.after command<br />' +
+				'<span class="code">t.$fieldset.append($copy);</span><br />' +
+				'Now check the source of the clone with Firebug, the &lt;script&gt; was removed by jQuery' +
+				'</div>'
+			);
+
+			t.$fieldset.append($copy);
+			console.log('Clone element was added to DOM');
+			
+			t.$fieldset.append('<div>It seems like the internally used method $.domManip is removing any &lt;script&gt; tags when manipulating the DOM...</div>');
+		}
+	};
+  
+  	$(document).ready(function(){
+  		cloneTest.init('#test1');
+  		scriptTagTest.init('#test2');
+   	});
+  </script>
+</head>
+
+<body>
+  <div>
+    <header>
+      <h1>jQuery DOM Manipulation test</h1>
+    </header>
+    <div id="desc">
+      I discovered something really weird when I needed to manipulate DOM with jQuery (1.7.1).... <br />
+      check the log and the source with Firebug!
+    </div>
+    
+    <div id="test1">
+    	<form>
+    		<fieldset>
+    			<legend>Clone</legend>
+    			<div>
+    				<label for="original">Element</label>
+    				<input type="text" id="original" name="original" value="This is my text" /> 
+    			</div>
+    			<div>
+    				<input type="button" class="trigger" value="Clone the item and change the value" />
+    			</div>
+    			
+    		</fieldset>
+    	</form>
+    </div>
+    
+    <div id="test2">
+    	<form>
+    		<fieldset>
+    			<legend>The &lt;script&gt; tag and DOM manipulation</legend>
+    			<div>
+    				<script type="text/javascript">
+    					var a_random_script = 0;
+    				</script>
+    				<label for="original">Element</label>
+    				<input type="text" id="original" name="original" value="This is my text" /> 
+    			</div>
+    			<div>
+    				<input type="button" class="trigger" value="Clone the item and check the source" />
+    			</div>
+    			
+    		</fieldset>
+    	</form>
+    </div>
+
+    <footer>
+     <p>&copy; Copyright  by Damien Antipa</p>
+    </footer>
+  </div>
+</body>
+</html>
