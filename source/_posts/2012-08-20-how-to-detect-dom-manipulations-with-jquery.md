@@ -24,4 +24,32 @@ Detecting any changes in the current DOM is not an easy task even though some cu
 
 If you still need to detect changes like me and you are using jQuery (or any other library) to do your manipulation you can use this gist to hook into your library to detect changes. Instead of detecting changes on the DOM we just detect manipulating function calls. This plugin injects a function call after a jQuery function was called. The configuration is fairly easy. jQuery.hook(&#8216;append&#8217;, myFunc) would call myFunc after jQuery.append was called.
 
-[gist id=3402141]
+{% codeblock lang:js %}
+/*
+ * Function hook jQuery plugin
+ * version 1.0
+ * author: Damien Antipa
+ * http://github.com/dantipa/
+ */
+(function(window, $, undefined){
+
+    /**
+     * Hooks into a given method
+     * 
+     * @param method
+     * @param fn
+     */
+    $.fn.hook = function (method, fn) {
+        var def = $.fn[method];
+
+        if (def) {
+            $.fn[method] = function() {
+                var r = def.apply(this, arguments); //original method
+                fn(this, method, arguments); //injected method
+                return r;
+            }
+        }
+    }
+
+})(window, jQuery);
+{% endcodeblock %}
