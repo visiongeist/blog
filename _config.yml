@@ -101,3 +101,7 @@ facebook_like: false
 
 # Gravatar
 gravatar_email: dantipa@adobe.com
+
+# Google Adsense
+googleadsense_id: ca-pub-3305122668027466
+googleadsense_slot: 8024212344
